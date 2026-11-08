@@ -17,20 +17,25 @@ namespace PerformanceCalculatorGUI.Screens.Collections
     public partial class ScoreContainer : Container
     {
         public long ScoreId { get; }
+        public string BeatmapId { get; }
         public ExtendedScore? Score { get; }
 
         private readonly IconButton deleteButton;
 
         public delegate void OnDeleteHandler(long scoreId);
 
-        public event OnDeleteHandler? OnDelete;
+        public delegate void OnDeleteMapHandler(string mapId, double accuracy);
 
-        public ScoreContainer(long scoreId, ExtendedScore? score)
+        public event OnDeleteHandler? OnDelete;
+        public event OnDeleteMapHandler? OnDeleteMap;
+
+        public ScoreContainer(long scoreId, string beatmapId, ExtendedScore? score)
         {
             RelativeSizeAxes = Axes.X;
             AutoSizeAxes = Axes.Y;
 
             ScoreId = scoreId;
+            BeatmapId = beatmapId;
             Score = score;
             Child = new GridContainer
             {
@@ -50,6 +55,7 @@ namespace PerformanceCalculatorGUI.Screens.Collections
                             Action = () =>
                             {
                                 OnDelete?.Invoke(scoreId);
+                                OnDeleteMap?.Invoke(beatmapId, score?.SoloScore.Accuracy ?? 1);
                             }
                         },
                         Score != null ? new ExtendedProfileScore(Score, true) : new NullProfileScore(ScoreId)

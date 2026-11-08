@@ -17,13 +17,16 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Logging;
+using osu.Game.Beatmaps;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Localisation;
+using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Dialog;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Mods;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
 using osuTK;
 using PerformanceCalculatorGUI.Components;
@@ -202,7 +205,8 @@ namespace PerformanceCalculatorGUI.Screens
 
             currentCollection.ValueChanged += loadCollection;
             createCollectionButton.OnSave += onCollectionAdd;
-            addScoreButton.OnAdd += onScoreAdd;
+            addScoreButton.OnScoreAdd += onScoreAdd;
+            addScoreButton.OnMapAdd += onMapAdd;
 
             loadCollectionList();
 
@@ -223,9 +227,29 @@ namespace PerformanceCalculatorGUI.Screens
             saveCurrentCollection();
         }
 
+        private void onMapAdd(string mapId, double accuracy)
+        {
+            if (currentCollection.Value!.Maps.Contains((mapId, accuracy)))
+            {
+                notificationDisplay.Display(new Notification($"Map {mapId} already exists with accuracy {accuracy * 100:F2}"));
+                return;
+            }
+
+            currentCollection.Value.Maps = [..currentCollection.Value.Maps, (mapId, accuracy)];
+
+            saveCurrentCollection();
+        }
+
         private void onScoreRemove(long scoreId)
         {
             currentCollection.Value!.Scores = currentCollection.Value.Scores.Where(x => x != scoreId).ToArray();
+
+            saveCurrentCollection();
+        }
+
+        private void onMapRemove(string mapId, double accuracy)
+        {
+            currentCollection.Value!.Maps = currentCollection.Value.Maps.Where(x => x.MapId != mapId || x.Accuracy != accuracy).ToArray();
 
             saveCurrentCollection();
         }
@@ -297,8 +321,38 @@ namespace PerformanceCalculatorGUI.Screens
 
                     Schedule(() =>
                     {
-                        var scoreContainer = new ScoreContainer(scoreId, extendedScore);
+                        var scoreContainer = new ScoreContainer(scoreId, "", extendedScore);
                         scoreContainer.OnDelete += onScoreRemove;
+
+                        scoresList.Add(scoreContainer);
+                    });
+                }
+
+                foreach ((string mapId, double accuracy) in currentCollection.Value.Maps)
+                {
+                    var working = ProcessorWorkingBeatmap.FromFileOrId(mapId, cachePath: configManager.GetBindable<string>(Settings.CachePath).Value);
+
+                    var rulesetInstance = working.BeatmapInfo.Ruleset.CreateInstance();
+
+                    var score = generateScore(working, accuracy);
+
+                    var scoreInfo = score.ToScoreInfo(rulesets, working.BeatmapInfo);
+
+                    var parsedScore = new ProcessorScoreDecoder(working).Parse(scoreInfo);
+
+                    var difficultyCalculator = rulesetInstance.CreateDifficultyCalculator(working);
+                    var difficultyAttributes = difficultyCalculator.Calculate();
+                    var performanceCalculator = rulesetInstance.CreatePerformanceCalculator();
+                    if (performanceCalculator == null)
+                        continue;
+
+                    var perfAttributes = performanceCalculator.Calculate(parsedScore.ScoreInfo, difficultyAttributes);
+                    ExtendedScore extendedScore = new ExtendedScore(score, difficultyAttributes, perfAttributes);
+
+                    Schedule(() =>
+                    {
+                        var scoreContainer = new ScoreContainer(-1, mapId, extendedScore);
+                        scoreContainer.OnDeleteMap += onMapRemove;
 
                         scoresList.Add(scoreContainer);
                     });
@@ -317,6 +371,31 @@ namespace PerformanceCalculatorGUI.Screens
             }, TaskContinuationOptions.None);
         }
 
+        private SoloScoreInfo generateScore(WorkingBeatmap workingBeatmap, double accuracy)
+        {
+            Dictionary<HitResult, int> statistics = RulesetHelper.GenerateHitResultsForRuleset(workingBeatmap.BeatmapInfo.Ruleset,
+                accuracy, workingBeatmap.Beatmap, Array.Empty<Mod>(), 0, 0, 0,
+                0, 0);
+
+            return new SoloScoreInfo
+            {
+                Accuracy = accuracy,
+                MaxCombo = workingBeatmap.Beatmap.GetMaxCombo(),
+                Statistics = statistics,
+                Beatmap = new APIBeatmap
+                {
+                    DifficultyName = workingBeatmap.BeatmapInfo.DifficultyName,
+                    BeatmapSet = new APIBeatmapSet()
+                    {
+                        Title = workingBeatmap.Beatmap.Metadata.Title,
+                        Artist = workingBeatmap.Beatmap.Metadata.Artist
+                    }
+                },
+                BeatmapID = workingBeatmap.BeatmapInfo.OnlineID,
+                RulesetID = workingBeatmap.BeatmapInfo.Ruleset.OnlineID
+            };
+        }
+
         private void onCollectionAdd(string name)
         {
             string fileName = RandomNumberGenerator.GetString(choices: "abcdefghijklmnopqrstuvwxyz0123456789", length: 16) + ".json";
@@ -325,7 +404,8 @@ namespace PerformanceCalculatorGUI.Screens
             {
                 Name = name,
                 FileName = fileName,
-                Scores = []
+                Scores = [],
+                Maps = []
             };
 
             string path = Path.Combine(collections_directory, fileName);

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
@@ -14,10 +15,15 @@ namespace PerformanceCalculatorGUI.Screens.Collections
         private readonly RoundedButton addButton;
         private readonly GridContainer creationContainer;
         private readonly OsuTextBox scoreIdTextBox;
+        private readonly OsuTextBox mapIdTextBox;
+        private readonly OsuTextBox accTextBox;
 
-        public delegate void OnAddHandler(long scoreId);
+        public delegate void OnScoreAddHandler(long scoreId);
 
-        public event OnAddHandler? OnAdd;
+        public delegate void OnMapAddHandler(string mapId, double accuracy);
+
+        public event OnScoreAddHandler? OnScoreAdd;
+        public event OnMapAddHandler? OnMapAdd;
 
         private const int height = 40;
         private const int fade_duration = 200;
@@ -44,7 +50,7 @@ namespace PerformanceCalculatorGUI.Screens.Collections
                 {
                     RelativeSizeAxes = Axes.Both,
                     Alpha = 0,
-                    ColumnDimensions = new[] { new Dimension(), new Dimension(GridSizeMode.Absolute, 100) },
+                    ColumnDimensions = new[] { new Dimension(), new Dimension(), new Dimension(GridSizeMode.Absolute, 100), new Dimension(GridSizeMode.Absolute, 100) },
                     RowDimensions = new[] { new Dimension(GridSizeMode.AutoSize) },
                     Content = new[]
                     {
@@ -54,6 +60,18 @@ namespace PerformanceCalculatorGUI.Screens.Collections
                             {
                                 RelativeSizeAxes = Axes.X,
                                 PlaceholderText = "Score ID",
+                                CornerRadius = height / 2f
+                            },
+                            mapIdTextBox = new OsuNumberBox
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                PlaceholderText = "Beatmap ID",
+                                CornerRadius = height / 2f
+                            },
+                            accTextBox = new OsuTextBox
+                            {
+                                RelativeSizeAxes = Axes.X,
+                                PlaceholderText = "100",
                                 CornerRadius = height / 2f
                             },
                             new RoundedButton
@@ -72,7 +90,7 @@ namespace PerformanceCalculatorGUI.Screens.Collections
 
         private void addScore()
         {
-            if (string.IsNullOrEmpty(scoreIdTextBox.Current.Value))
+            if (string.IsNullOrEmpty(scoreIdTextBox.Current.Value) && string.IsNullOrEmpty(mapIdTextBox.Current.Value))
             {
                 scoreIdTextBox.FlashColour(ColourInfo.SingleColour(Colour4.Red), 500);
                 return;
@@ -81,8 +99,12 @@ namespace PerformanceCalculatorGUI.Screens.Collections
             creationContainer.FadeOut(fade_duration);
             addButton.FadeIn(fade_duration);
 
-            OnAdd?.Invoke(long.Parse(scoreIdTextBox.Current.Value));
-            scoreIdTextBox.Current.Value = string.Empty;
+            if (!string.IsNullOrEmpty(scoreIdTextBox.Current.Value))
+                OnScoreAdd?.Invoke(long.Parse(scoreIdTextBox.Current.Value));
+            else
+                OnMapAdd?.Invoke(mapIdTextBox.Current.Value, double.TryParse(accTextBox.Current.Value, out double acc) ? Math.Round(Math.Clamp(acc / 100, 0, 1), 4) : 1);
+
+            scoreIdTextBox.Current.Value = mapIdTextBox.Current.Value = accTextBox.Current.Value = string.Empty;
         }
     }
 }
