@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -27,9 +27,8 @@ using osu.Game.Localisation;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Dialog;
 using osu.Game.Rulesets;
-using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Osu.Difficulty;
+using osu.Game.Rulesets.Mania.Difficulty;
 using osuTK;
 using PerformanceCalculatorGUI.Components;
 using PerformanceCalculatorGUI.Components.TextBoxes;
@@ -62,7 +61,7 @@ namespace PerformanceCalculatorGUI.Screens
         private NotificationDisplay notificationDisplay { get; set; } = null!;
 
         [Resolved]
-        private DifficultyTuningManager<OsuDifficultyConstants> tuningManager { get; set; } = null!;
+        private DifficultyTuningManager<ManiaDifficultyConstants> tuningManager { get; set; } = null!;
 
         private FillFlowContainer collectionList = null!;
         private CreateCollectionButton createCollectionButton = null!;
@@ -82,8 +81,8 @@ namespace PerformanceCalculatorGUI.Screens
         private readonly Stopwatch autobalanceStopwatch = new Stopwatch();
         private ScheduledDelegate? autobalanceElapsedUpdate;
         private readonly Bindable<AutobalanceTarget> autobalanceTarget = new Bindable<AutobalanceTarget>(AutobalanceTarget.Total);
-        private readonly Dictionary<DifficultyTuningParameter<OsuDifficultyConstants>, AutobalanceParameterState> autobalanceParameterStates
-            = new Dictionary<DifficultyTuningParameter<OsuDifficultyConstants>, AutobalanceParameterState>();
+        private readonly Dictionary<DifficultyTuningParameter<ManiaDifficultyConstants>, AutobalanceParameterState> autobalanceParameterStates
+            = new Dictionary<DifficultyTuningParameter<ManiaDifficultyConstants>, AutobalanceParameterState>();
         private bool autobalanceRunning;
         private readonly Bindable<OptimizerType> optimizerType = new Bindable<OptimizerType>(OptimizerType.CmaEs);
         private LimitedLabelledNumberBox generationsBox = null!;
@@ -820,7 +819,7 @@ namespace PerformanceCalculatorGUI.Screens
             }
         }
 
-        private static double computeDefaultLowerBound(DifficultyTuningParameter<OsuDifficultyConstants> parameter, double baseVal)
+        private static double computeDefaultLowerBound(DifficultyTuningParameter<ManiaDifficultyConstants> parameter, double baseVal)
         {
             if (parameter.MaxValue is { })
                 return parameter.MinValue;
@@ -828,7 +827,7 @@ namespace PerformanceCalculatorGUI.Screens
             return Math.Max(parameter.MinValue, baseVal * 0.33);
         }
 
-        private static double computeDefaultUpperBound(DifficultyTuningParameter<OsuDifficultyConstants> parameter, double baseVal)
+        private static double computeDefaultUpperBound(DifficultyTuningParameter<ManiaDifficultyConstants> parameter, double baseVal)
         {
             if (parameter.MaxValue is { } maxVal)
                 return maxVal;
@@ -887,7 +886,7 @@ namespace PerformanceCalculatorGUI.Screens
                              .ContinueWith(handleAutobalanceResult, TaskContinuationOptions.None);
         }
 
-        private void handleAutobalanceResult(Task<AutobalanceResult<OsuDifficultyConstants>> task)
+        private void handleAutobalanceResult(Task<AutobalanceResult<ManiaDifficultyConstants>> task)
         {
             if (task.Exception != null)
                 Logger.Log(task.Exception.ToString(), level: LogLevel.Error);
@@ -896,7 +895,7 @@ namespace PerformanceCalculatorGUI.Screens
             {
                 loadingLayer.Hide();
 
-                var result = task.IsFaulted ? AutobalanceResult<OsuDifficultyConstants>.Failure("Autobalance failed.") : task.GetAwaiter().GetResult();
+                var result = task.IsFaulted ? AutobalanceResult<ManiaDifficultyConstants>.Failure("Autobalance failed.") : task.GetAwaiter().GetResult();
 
                 if (task.IsFaulted || result.IsFailure)
                 {
@@ -940,7 +939,7 @@ namespace PerformanceCalculatorGUI.Screens
             }
 
             var target = autobalanceTarget.Value;
-            var getTargetValue = AutobalanceEvaluator<OsuDifficultyConstants>.GetOsuTargetValueFunc();
+            var getTargetValue = AutobalanceEvaluator<ManiaDifficultyConstants>.GetOsuTargetValueFunc();
             var pairs = new List<(double actual, double expected, double weight)>();
 
             foreach (var container in scoresList.Children)
@@ -983,7 +982,7 @@ namespace PerformanceCalculatorGUI.Screens
                 return;
             }
 
-            double spearman = AutobalanceEvaluator<OsuDifficultyConstants>.ComputeSpearmanCorrelation(
+            double spearman = AutobalanceEvaluator<ManiaDifficultyConstants>.ComputeSpearmanCorrelation(
                 pairs.Select(p => p.actual).ToArray(),
                 pairs.Select(p => p.expected).ToArray(),
                 pairs.Count);

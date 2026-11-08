@@ -265,6 +265,7 @@ namespace PerformanceCalculatorGUI.Components
                 PlaceholderText = defaultValue.ToString(),
                 MinValue = 0.0,
                 MaxValue = double.MaxValue,
+                FixedLabelWidth = 100,
                 Value = { Value = defaultValue }
             };
         }
@@ -278,6 +279,7 @@ namespace PerformanceCalculatorGUI.Components
                 Label = label,
                 PlaceholderText = defaultValue.ToString(),
                 MinValue = 0,
+                FixedLabelWidth = 100,
                 Value = { Value = defaultValue }
             };
         }

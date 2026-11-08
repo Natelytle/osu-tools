@@ -10,10 +10,10 @@ using osu.Game.Rulesets.Catch;
 using osu.Game.Rulesets.Catch.Objects;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.Mania;
+using osu.Game.Rulesets.Mania.Difficulty;
 using osu.Game.Rulesets.Mania.Objects;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
-using osu.Game.Rulesets.Osu.Difficulty;
 using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Taiko;
@@ -36,23 +36,23 @@ namespace PerformanceCalculatorGUI
             };
         }
 
-        public static DifficultyCalculator GetExtendedDifficultyCalculator(RulesetInfo ruleset, IWorkingBeatmap working, OsuDifficultyConstants? osuTuning)
+        public static DifficultyCalculator GetExtendedDifficultyCalculator(RulesetInfo ruleset, IWorkingBeatmap working, ManiaDifficultyConstants? maniaTuning)
         {
             return ruleset.OnlineID switch
             {
-                0 => new ExtendedOsuDifficultyCalculator(ruleset, working, osuTuning),
+                0 => new ExtendedOsuDifficultyCalculator(ruleset, working),
                 1 => new ExtendedTaikoDifficultyCalculator(ruleset, working),
                 2 => new ExtendedCatchDifficultyCalculator(ruleset, working),
-                3 => new ExtendedManiaDifficultyCalculator(ruleset, working),
+                3 => new ExtendedManiaDifficultyCalculator(ruleset, working, maniaTuning),
                 _ => ruleset.CreateInstance().CreateDifficultyCalculator(working)
             };
         }
 
-        public static DifficultyCalculator CreateTunedDifficultyCalculator(RulesetInfo rulesetInfo, IWorkingBeatmap working, DifficultyTuningManager<OsuDifficultyConstants> osuTuning)
+        public static DifficultyCalculator CreateTunedDifficultyCalculator(RulesetInfo rulesetInfo, IWorkingBeatmap working, DifficultyTuningManager<ManiaDifficultyConstants> osuTuning)
         {
             return rulesetInfo.ShortName switch
             {
-                "osu" => new ExtendedOsuDifficultyCalculator(rulesetInfo, working, osuTuning.Current.Value),
+                "mania" => new ExtendedManiaDifficultyCalculator(rulesetInfo, working, osuTuning.Current.Value),
                 _ => GetExtendedDifficultyCalculator(rulesetInfo, working)
             };
         }

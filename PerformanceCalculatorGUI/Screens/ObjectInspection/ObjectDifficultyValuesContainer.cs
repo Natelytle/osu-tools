@@ -1,8 +1,7 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Collections.Generic;
-using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
@@ -17,11 +16,6 @@ using osu.Game.Rulesets.Catch.Difficulty.Evaluators;
 using osu.Game.Rulesets.Catch.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Osu.Difficulty;
-using osu.Game.Rulesets.Osu.Difficulty.Evaluators;
-using osu.Game.Rulesets.Osu.Difficulty.Evaluators.Aim;
-using osu.Game.Rulesets.Osu.Difficulty.Evaluators.Speed;
-using PerformanceCalculatorGUI.Configuration;
 using osu.Game.Rulesets.Osu.Difficulty.Preprocessing;
 using osu.Game.Rulesets.Osu.Objects;
 using osu.Game.Rulesets.Taiko.Difficulty.Evaluators;
@@ -38,9 +32,6 @@ namespace PerformanceCalculatorGUI.Screens.ObjectInspection
 
         [Resolved]
         private Track track { get; set; } = null!;
-
-        [Resolved]
-        private DifficultyTuningManager<OsuDifficultyConstants> tuningManager { get; set; } = null!;
 
         private SpriteText hitObjectTypeText = null!;
 
@@ -134,35 +125,8 @@ namespace PerformanceCalculatorGUI.Screens.ObjectInspection
 
         private void drawOsuValues(OsuDifficultyHitObject hitObject)
         {
-            bool hidden = appliedMods.Value.Any(x => x is ModHidden);
-            flowContainer.AddRange(new[]
-            {
-                new ObjectInspectorDifficultyValue("Position", (hitObject.BaseObject as OsuHitObject)!.StackedPosition),
-                new ObjectInspectorDifficultyValue("Delta Time", hitObject.DeltaTime),
-                new ObjectInspectorDifficultyValue("Adjusted Delta Time", hitObject.AdjustedDeltaTime),
-                new ObjectInspectorDifficultyValue("Last Obj End Delta Time", hitObject.LastObjectEndDeltaTime),
-                new ObjectInspectorDifficultyValue("Doubletapness", hitObject.GetDoubletapness((OsuDifficultyHitObject)hitObject.Next(0))),
-                new ObjectInspectorDifficultyValue("Jump Distance", hitObject.JumpDistance),
-                new ObjectInspectorDifficultyValue("Lazy Jump Dist", hitObject.LazyJumpDistance),
-                new ObjectInspectorDifficultyValue("Min Jump Dist", hitObject.MinimumJumpDistance),
-                new ObjectInspectorDifficultyValue("Min Jump Time", hitObject.MinimumJumpTime),
-
-                new ObjectInspectorDifficultyValue("Snap Aim Difficulty", SnapAimEvaluator.EvaluateDifficultyOf(hitObject, true, tuningManager.Current.Value)),
-                new ObjectInspectorDifficultyValue("Snap Aim Difficulty (w/o sliders)", SnapAimEvaluator.EvaluateDifficultyOf(hitObject, false, tuningManager.Current.Value)),
-                new ObjectInspectorDifficultyValue("Flow Aim Difficulty", FlowAimEvaluator.EvaluateDifficultyOf(hitObject, true, tuningManager.Current.Value)),
-                new ObjectInspectorDifficultyValue("Flow Aim Difficulty (w/o sliders)", FlowAimEvaluator.EvaluateDifficultyOf(hitObject, false, tuningManager.Current.Value)),
-                new ObjectInspectorDifficultyValue("Agility Difficulty", AgilityEvaluator.EvaluateDifficultyOf(hitObject, tuningManager.Current.Value)),
-                new ObjectInspectorDifficultyValue("Speed Difficulty", SpeedEvaluator.EvaluateDifficultyOf(hitObject, tuningManager.Current.Value)),
-                new ObjectInspectorDifficultyValue("Rhythm Difficulty", osu.Game.Rulesets.Osu.Difficulty.Evaluators.Speed.RhythmEvaluator.EvaluateDifficultyOf(hitObject, tuningManager.Current.Value)),
-                new ObjectInspectorDifficultyValue("Reading Difficulty", osu.Game.Rulesets.Osu.Difficulty.Evaluators.ReadingEvaluator.EvaluateDifficultyOf(hitObject, hidden, tuningManager.Current.Value)),
-                new ObjectInspectorDifficultyValue(hidden ? "FLHD Difficulty" : "Flashlight Diff", FlashlightEvaluator.EvaluateDifficultyOf(hitObject, appliedMods.Value, tuningManager.Current.Value)),
-            });
-
             if (hitObject.Angle is not null)
                 flowContainer.Add(new ObjectInspectorDifficultyValue("Angle", double.RadiansToDegrees(hitObject.Angle.Value)));
-
-            if (hitObject.AngularVelocity is not null)
-                flowContainer.Add(new ObjectInspectorDifficultyValue("Angular Velocity", hitObject.AngularVelocity.Value));
 
             if (hitObject.BaseObject is Slider)
             {

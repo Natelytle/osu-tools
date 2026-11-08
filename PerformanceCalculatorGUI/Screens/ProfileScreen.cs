@@ -21,8 +21,8 @@ using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Overlays;
 using osu.Game.Rulesets;
+using osu.Game.Rulesets.Mania.Difficulty;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Osu.Difficulty;
 using osuTK;
 using osuTK.Graphics;
 using osuTK.Input;
@@ -75,7 +75,7 @@ namespace PerformanceCalculatorGUI.Screens
         private RulesetStore rulesets { get; set; } = null!;
 
         [Resolved]
-        private DifficultyTuningManager<OsuDifficultyConstants> tuningManager { get; set; } = null!;
+        private DifficultyTuningManager<ManiaDifficultyConstants> tuningManager { get; set; } = null!;
 
         public override bool ShouldShowConfirmationDialogOnSwitch => false;
 

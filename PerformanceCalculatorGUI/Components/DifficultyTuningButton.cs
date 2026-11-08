@@ -10,7 +10,7 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Game.Overlays.Toolbar;
 using osu.Game.Rulesets;
-using osu.Game.Rulesets.Osu.Difficulty;
+using osu.Game.Rulesets.Mania.Difficulty;
 using PerformanceCalculatorGUI.Configuration;
 
 namespace PerformanceCalculatorGUI.Components
@@ -23,7 +23,7 @@ namespace PerformanceCalculatorGUI.Components
         private Bindable<RulesetInfo> ruleset { get; set; } = null!;
 
         [Resolved]
-        private DifficultyTuningManager<OsuDifficultyConstants> osuTuningManager { get; set; } = null!;
+        private DifficultyTuningManager<ManiaDifficultyConstants> maniaTuningManager { get; set; } = null!;
 
         public DifficultyTuningButton()
         {
@@ -35,17 +35,17 @@ namespace PerformanceCalculatorGUI.Components
         {
             return ruleset.Value.ShortName switch
             {
-                "osu" => new DifficultyTuningPopover<OsuDifficultyConstants>(
-                    osuTuningManager.Current,
-                    OsuDifficultyConstants.Default,
-                    "osu!",
-                    "osu-tuning.json",
+                "mania" => new DifficultyTuningPopover<ManiaDifficultyConstants>(
+                    maniaTuningManager.Current,
+                    ManiaDifficultyConstants.Default,
+                    "mania",
+                    "mania-tuning.json",
                     OsuDifficultyTuningParameters.Sections),
-                _ => new DifficultyTuningPopover<OsuDifficultyConstants>(
-                    osuTuningManager.Current,
-                    OsuDifficultyConstants.Default,
-                    "osu!",
-                    "osu-tuning.json",
+                _ => new DifficultyTuningPopover<ManiaDifficultyConstants>(
+                    maniaTuningManager.Current,
+                    ManiaDifficultyConstants.Default,
+                    "mania",
+                    "mania-tuning.json",
                     OsuDifficultyTuningParameters.Sections)
             };
         }

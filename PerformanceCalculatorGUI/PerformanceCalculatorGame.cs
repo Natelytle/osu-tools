@@ -13,9 +13,9 @@ using osu.Framework.Platform;
 using osu.Game;
 using osu.Game.Graphics.Cursor;
 using osu.Game.Overlays;
+using osu.Game.Rulesets.Mania.Difficulty;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Osu;
-using osu.Game.Rulesets.Osu.Difficulty;
 using PerformanceCalculatorGUI.Components;
 using PerformanceCalculatorGUI.Configuration;
 using PerformanceCalculatorGUI.Screens.Collections;
@@ -61,7 +61,7 @@ namespace PerformanceCalculatorGUI
             var scoreCache = new ScoreCache();
             dependencies.CacheAs(scoreCache);
 
-            var osuTuningManager = new DifficultyTuningManager<OsuDifficultyConstants>(OsuDifficultyConstants.Default);
+            var osuTuningManager = new DifficultyTuningManager<ManiaDifficultyConstants>(ManiaDifficultyConstants.Default);
             dependencies.CacheAs(osuTuningManager);
 
             AddRange(new Drawable[]

@@ -20,8 +20,8 @@ using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Overlays;
 using osu.Game.Overlays.BeatmapSet.Scores;
 using osu.Game.Rulesets;
+using osu.Game.Rulesets.Mania.Difficulty;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Osu.Difficulty;
 using osu.Game.Scoring;
 using PerformanceCalculatorGUI.Components;
 using PerformanceCalculatorGUI.Components.TextBoxes;
@@ -63,7 +63,7 @@ namespace PerformanceCalculatorGUI.Screens
         private SettingsManager configManager { get; set; } = null!;
 
         [Resolved]
-        private DifficultyTuningManager<OsuDifficultyConstants> tuningManager { get; set; } = null!;
+        private DifficultyTuningManager<ManiaDifficultyConstants> tuningManager { get; set; } = null!;
 
         public override bool ShouldShowConfirmationDialogOnSwitch => false;
 

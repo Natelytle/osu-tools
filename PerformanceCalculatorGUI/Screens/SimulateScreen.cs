@@ -26,8 +26,8 @@ using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Overlays;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Difficulty;
+using osu.Game.Rulesets.Mania.Difficulty;
 using osu.Game.Rulesets.Mods;
-using osu.Game.Rulesets.Osu.Difficulty;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Scoring;
@@ -116,7 +116,7 @@ namespace PerformanceCalculatorGUI.Screens
         private APIManager apiManager { get; set; } = null!;
 
         [Resolved]
-        private DifficultyTuningManager<OsuDifficultyConstants> tuningManager { get; set; } = null!;
+        private DifficultyTuningManager<ManiaDifficultyConstants> tuningManager { get; set; } = null!;
 
         [Cached]
         private OverlayColourProvider colourProvider = new OverlayColourProvider(OverlayColourScheme.Blue);

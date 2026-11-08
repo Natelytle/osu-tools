@@ -2,14 +2,13 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets;
 using osu.Game.Rulesets.Difficulty;
-using osu.Game.Rulesets.Osu;
-using osu.Game.Rulesets.Osu.Difficulty;
+using osu.Game.Rulesets.Mania;
+using osu.Game.Rulesets.Mania.Difficulty;
 using PerformanceCalculatorGUI.Configuration;
 
 namespace PerformanceCalculatorGUI.Screens.Collections.Autobalance
@@ -25,19 +24,19 @@ namespace PerformanceCalculatorGUI.Screens.Collections.Autobalance
             dataset = new AutobalanceDataset(scoreCache, rulesets, configManager);
         }
 
-        public Task<AutobalanceResult<OsuDifficultyConstants>> RunOsuAsync(Collection collection, AutobalanceTarget target,
-                                                                           DifficultyTuningParameter<OsuDifficultyConstants>[] selectedParameters,
-                                                                           OsuDifficultyConstants baseConstants,
+        public Task<AutobalanceResult<ManiaDifficultyConstants>> RunOsuAsync(Collection collection, AutobalanceTarget target,
+                                                                           DifficultyTuningParameter<ManiaDifficultyConstants>[] selectedParameters,
+                                                                           ManiaDifficultyConstants baseConstants,
                                                                            OptimizerType optimizerType = OptimizerType.CmaEs,
                                                                            OptimizerConfig? config = null,
                                                                            Action<AutobalanceProgress>? progress = null)
         {
-            var osuRuleset = new OsuRuleset();
+            var maniaRuleset = new ManiaRuleset();
 
-            return RunAsync(collection, target, selectedParameters, baseConstants, "osu",
-                (tuning, working) => new OsuDifficultyCalculator(osuRuleset.RulesetInfo, working, tuning),
-                () => osuRuleset.CreatePerformanceCalculator()!,
-                AutobalanceEvaluator<OsuDifficultyConstants>.GetOsuTargetValueFunc(),
+            return RunAsync(collection, target, selectedParameters, baseConstants, "mania",
+                (tuning, working) => new ManiaDifficultyCalculator(maniaRuleset.RulesetInfo, working, tuning),
+                () => maniaRuleset.CreatePerformanceCalculator()!,
+                AutobalanceEvaluator<ManiaDifficultyConstants>.GetOsuTargetValueFunc(),
                 optimizerType, config, progress);
         }
 
