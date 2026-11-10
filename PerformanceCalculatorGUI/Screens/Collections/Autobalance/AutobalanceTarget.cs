@@ -7,22 +7,7 @@ namespace PerformanceCalculatorGUI.Screens.Collections.Autobalance
 {
     public enum AutobalanceTarget
     {
-        [Description("Total")]
-        Total,
-
-        [Description("Aim")]
-        Aim,
-
-        [Description("Speed")]
-        Speed,
-
-        [Description("Accuracy")]
-        Accuracy,
-
-        [Description("Reading")]
-        Reading,
-
-        [Description("Flashlight")]
-        Flashlight
+        [Description("Star Rating")]
+        StarRating
     }
 }

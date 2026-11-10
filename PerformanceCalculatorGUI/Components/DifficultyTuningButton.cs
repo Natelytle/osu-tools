@@ -40,13 +40,13 @@ namespace PerformanceCalculatorGUI.Components
                     ManiaDifficultyConstants.Default,
                     "mania",
                     "mania-tuning.json",
-                    OsuDifficultyTuningParameters.Sections),
+                    ManiaDifficultyTuningParameters.SECTIONS),
                 _ => new DifficultyTuningPopover<ManiaDifficultyConstants>(
                     maniaTuningManager.Current,
                     ManiaDifficultyConstants.Default,
                     "mania",
                     "mania-tuning.json",
-                    OsuDifficultyTuningParameters.Sections)
+                    ManiaDifficultyTuningParameters.SECTIONS)
             };
         }
 

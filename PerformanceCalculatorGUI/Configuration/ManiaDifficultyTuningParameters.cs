@@ -10,14 +10,15 @@ using osu.Game.Rulesets.Mania.Difficulty;
 
 namespace PerformanceCalculatorGUI.Configuration
 {
-    public static class OsuDifficultyTuningParameters
+    public static class ManiaDifficultyTuningParameters
     {
-        public static readonly IReadOnlyList<DifficultyTuningSection<ManiaDifficultyConstants>> Sections = new[]
+        public static readonly IReadOnlyList<DifficultyTuningSection<ManiaDifficultyConstants>> SECTIONS = new[]
         {
             new DifficultyTuningSection<ManiaDifficultyConstants>("Performance scales",
                 doubleParam(nameof(ManiaDifficultyConstants.StarRatingExponent), c => c.StarRatingExponent, (c, v) => c with { StarRatingExponent = v }, defaultEnabled: false),
-                doubleParam(nameof(ManiaDifficultyConstants.PerformanceMultiplier), c => c.PerformanceMultiplier, (c, v) => c with { PerformanceMultiplier = v }, defaultEnabled: false),
-                doubleParam(nameof(ManiaDifficultyConstants.PerformanceExponent), c => c.PerformanceExponent, (c, v) => c with { PerformanceExponent = v }, defaultEnabled: false)
+                doubleParam(nameof(ManiaDifficultyConstants.StarRatingMultiplier), c => c.StarRatingMultiplier, (c, v) => c with { StarRatingMultiplier = v }, defaultEnabled: false),
+                doubleParam(nameof(ManiaDifficultyConstants.PerformanceExponent), c => c.PerformanceExponent, (c, v) => c with { PerformanceExponent = v }, defaultEnabled: false),
+                doubleParam(nameof(ManiaDifficultyConstants.PerformanceMultiplier), c => c.PerformanceMultiplier, (c, v) => c with { PerformanceMultiplier = v }, defaultEnabled: false)
             ),
             new DifficultyTuningSection<ManiaDifficultyConstants>("Skill Multipliers",
                 doubleParam(nameof(ManiaDifficultyConstants.CoordinationMultiplier), c => c.CoordinationMultiplier, (c, v) => c with { CoordinationMultiplier = v }),
@@ -42,16 +43,16 @@ namespace PerformanceCalculatorGUI.Configuration
             ),
         };
 
-        public static readonly IReadOnlyList<DifficultyTuningParameter<ManiaDifficultyConstants>> All =
-            Sections.SelectMany(s => s.Parameters).ToArray();
+        public static readonly IReadOnlyList<DifficultyTuningParameter<ManiaDifficultyConstants>> ALL =
+            SECTIONS.SelectMany(s => s.Parameters).ToArray();
 
         /// <summary>
-        /// Returns property names from <see cref="OsuDifficultyConstants"/> that are not covered by any tuning parameter definition.
+        /// Returns property names from <see cref="ManiaDifficultyConstants"/> that are not covered by any tuning parameter definition.
         /// Useful as a drift detection warning when the constants record gains new properties.
         /// </summary>
         public static IReadOnlyList<string> GetUncoveredProperties()
         {
-            var definedNames = new HashSet<string>(All.Select(p => p.PropertyName));
+            var definedNames = new HashSet<string>(ALL.Select(p => p.PropertyName));
 
             return typeof(ManiaDifficultyConstants)
                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)

@@ -80,7 +80,7 @@ namespace PerformanceCalculatorGUI.Screens
         private string autobalanceStage = "Ready";
         private readonly Stopwatch autobalanceStopwatch = new Stopwatch();
         private ScheduledDelegate? autobalanceElapsedUpdate;
-        private readonly Bindable<AutobalanceTarget> autobalanceTarget = new Bindable<AutobalanceTarget>(AutobalanceTarget.Total);
+        private readonly Bindable<AutobalanceTarget> autobalanceTarget = new Bindable<AutobalanceTarget>(AutobalanceTarget.StarRating);
         private readonly Dictionary<DifficultyTuningParameter<ManiaDifficultyConstants>, AutobalanceParameterState> autobalanceParameterStates
             = new Dictionary<DifficultyTuningParameter<ManiaDifficultyConstants>, AutobalanceParameterState>();
         private bool autobalanceRunning;
@@ -647,7 +647,7 @@ namespace PerformanceCalculatorGUI.Screens
 
             var currentConstants = tuningManager.Current.Value;
 
-            foreach (var section in OsuDifficultyTuningParameters.Sections)
+            foreach (var section in ManiaDifficultyTuningParameters.SECTIONS)
             {
                 var sectionBindables = new List<BindableBool>();
 

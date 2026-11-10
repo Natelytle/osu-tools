@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using osu.Framework.Logging;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Difficulty;
-using osu.Game.Rulesets.Osu.Difficulty;
+using osu.Game.Rulesets.Mania.Difficulty;
 using PerformanceCalculatorGUI.Configuration;
 
 namespace PerformanceCalculatorGUI.Screens.Collections.Autobalance
@@ -180,12 +180,7 @@ namespace PerformanceCalculatorGUI.Screens.Collections.Autobalance
 
                 return target switch
                 {
-                    AutobalanceTarget.Total => attributes.Total,
-                    AutobalanceTarget.Aim => (attributes as OsuPerformanceAttributes)?.Aim,
-                    AutobalanceTarget.Speed => (attributes as OsuPerformanceAttributes)?.Speed,
-                    AutobalanceTarget.Accuracy => (attributes as OsuPerformanceAttributes)?.Accuracy,
-                    AutobalanceTarget.Reading => (attributes as OsuPerformanceAttributes)?.Reading,
-                    AutobalanceTarget.Flashlight => (attributes as OsuPerformanceAttributes)?.Flashlight,
+                    AutobalanceTarget.StarRating => (attributes as ManiaPerformanceAttributes)?.StarRating,
                     _ => null
                 };
             };

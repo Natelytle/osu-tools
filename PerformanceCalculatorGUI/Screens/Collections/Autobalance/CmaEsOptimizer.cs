@@ -277,10 +277,11 @@ namespace PerformanceCalculatorGUI.Screens.Collections.Autobalance
                         penaltyCount++;
                 }
 
-                if (gen % 10 == 0 || gen < 5)
+                // if (gen % 10 == 0 || gen < 5)
                 {
                     Logger.Log($"[CMA-ES] gen {gen}: best={fitness[0].loss:F4} worst={fitness[lambda - 1].loss:F4} "
                                + $"sigma={sigma:F6} bestEver={bestLoss:F4} penalties={penaltyCount}/{lambda}", LoggingTarget.Information);
+                    // Logger.Log($"{bestRealValues} for {parameters}");
                 }
 
                 // --- Update mean (in normalized space) ---

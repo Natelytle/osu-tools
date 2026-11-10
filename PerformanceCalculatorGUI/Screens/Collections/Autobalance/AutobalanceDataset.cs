@@ -107,34 +107,35 @@ namespace PerformanceCalculatorGUI.Screens.Collections.Autobalance
 
         internal static bool TryGetExpectedValue(ExpectedPerformanceValues expectedValues, AutobalanceTarget target, out double expectedValue)
         {
-            if (target == AutobalanceTarget.Total)
+            if (target == AutobalanceTarget.StarRating)
             {
-                if (expectedValues.Total.HasValue)
-                {
-                    expectedValue = expectedValues.Total.Value;
-                    return true;
-                }
+                // if (expectedValues.Total.HasValue)
+                // {
+                //     expectedValue = expectedValues.Total.Value;
+                //     return true;
+                // }
 
-                if (expectedValues.Skills.TryGetValue("pp", out expectedValue))
-                    return true;
-
-                if (expectedValues.Skills.TryGetValue("total", out expectedValue))
+                if (expectedValues.Skills.TryGetValue("star_rating", out expectedValue))
                     return true;
 
-                return false;
+                if (expectedValues.Skills.TryGetValue("star rating", out expectedValue))
+                    return true;
+
+                // if (expectedValues.Skills.TryGetValue("total", out expectedValue))
+                //     return true;
             }
 
-            string key = target switch
-            {
-                AutobalanceTarget.Aim => "aim",
-                AutobalanceTarget.Speed => "speed",
-                AutobalanceTarget.Accuracy => "accuracy",
-                AutobalanceTarget.Reading => "reading",
-                AutobalanceTarget.Flashlight => "flashlight",
-                _ => "total"
-            };
+            // string key = target switch
+            // {
+            //     AutobalanceTarget.SR => "aim",
+            //     _ => "total"
+            // };
+            //
+            // return expectedValues.Skills.TryGetValue(key, out expectedValue);
 
-            return expectedValues.Skills.TryGetValue(key, out expectedValue);
+            expectedValue = 0;
+
+            return false;
         }
 
         private static void reportDatasetProgress(Action<AutobalanceProgress>? progress, int processed, int total)

@@ -290,12 +290,7 @@ namespace PerformanceCalculatorGUI.Screens.Collections
             // Find the actual value for this target
             string targetKey = target switch
             {
-                AutobalanceTarget.Total => "total",
-                AutobalanceTarget.Aim => "aim",
-                AutobalanceTarget.Speed => "speed",
-                AutobalanceTarget.Accuracy => "accuracy",
-                AutobalanceTarget.Reading => "reading",
-                AutobalanceTarget.Flashlight => "flashlight",
+                AutobalanceTarget.StarRating => "star_rating",
                 _ => "total"
             };
 
